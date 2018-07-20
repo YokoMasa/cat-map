@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#795548</color>
+    <color name="colorPrimaryDark">#4b2c20</color>
+    <color name="colorAccent">#a98274</color>
+    <color name="toolbarTransparent">#bfFFFFFF</color>
+    <color name="text_black">#555555</color>
+    <color name="login_button_color">@color/colorPrimary</color>
+    <color name="login_button_color_pressed">#99776a</color>
+</resources>
