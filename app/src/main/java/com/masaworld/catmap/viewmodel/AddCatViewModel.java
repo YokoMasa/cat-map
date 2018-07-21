@@ -11,13 +11,9 @@ import com.masaworld.catmap.data.repository.CatRepository;
 
 public class AddCatViewModel extends ViewModel {
 
-    MutableLiveData<ViewEvent> showLoadingEvent;
     MutableLiveData<ViewEvent<Integer>> showToastEvent;
     MutableLiveData<ViewEvent> goBackEvent;
-
-    public LiveData<ViewEvent> getShowLoadingEvent() {
-        return showLoadingEvent;
-    }
+    MutableLiveData<ViewEvent> startServiceEvent;
 
     public LiveData<ViewEvent<Integer>> getShowToastEvent() {
         return showToastEvent;
@@ -27,23 +23,18 @@ public class AddCatViewModel extends ViewModel {
         return goBackEvent;
     }
 
+    public LiveData<ViewEvent> getStartServiceEvent() {
+        return startServiceEvent;
+    }
+
     public void createCat(String name, LatLng latLng, Uri imageUri) {
         if (!validateCreateCat(name, latLng, imageUri)) {
             showToastEvent.setValue(new ViewEvent<>(R.string.uncompleted_form));
             return;
         }
-        showLoadingEvent.setValue(new ViewEvent(null));
 
-
-        CatRepository.getInstance().createCat(name, latLng, imageUri).observeForever(result -> {
-            if (result.failed) {
-                showToastEvent.setValue(new ViewEvent<>(result.error.messageId));
-            } else {
-                showToastEvent.setValue(new ViewEvent<>(R.string.added_cat));
-            }
-            goBackEvent.setValue(new ViewEvent(null));
-        });
-
+        startServiceEvent.setValue(new ViewEvent(null));
+        goBackEvent.setValue(new ViewEvent(null));
     }
 
     public boolean validateCreateCat(String name, LatLng latLng, Uri uri) {
@@ -54,9 +45,9 @@ public class AddCatViewModel extends ViewModel {
     }
 
     public AddCatViewModel() {
-        showLoadingEvent = new MutableLiveData<>();
         showToastEvent = new MutableLiveData<>();
         goBackEvent = new MutableLiveData<>();
+        startServiceEvent = new MutableLiveData<>();
     }
 
 }

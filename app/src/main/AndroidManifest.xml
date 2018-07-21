@@ -29,6 +29,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <service android:name=".service.CatPostService"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.masaworld.fileprovider"

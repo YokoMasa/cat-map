@@ -1,8 +1,12 @@
 package com.masaworld.catmap.ui.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -17,6 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.Cat;
+import com.masaworld.catmap.service.CatPostService;
 import com.masaworld.catmap.ui.fragment.LoginCheckDialogFragment;
 import com.masaworld.catmap.viewmodel.CatMapViewModel;
 import com.masaworld.catmap.viewmodel.ViewEvent;
@@ -34,20 +39,36 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        setUpViewModel();
+        setUpBroadcastReceiver();
+    }
 
+    private void setUpViewModel() {
         viewModel = ViewModelProviders.of(this).get(CatMapViewModel.class);
         viewModel.getToastEvent().observe(this, this::handleToastEvent);
         viewModel.getLoginDialogEvent().observe(this, this::handleShowLoginDialogEvent);
         viewModel.getCats().observe(getLifecycle(), this::addCatMarker);
         viewModel.getNavigateToCatEvent().observe(this, this::handleNavigateToCatEvent);
         viewModel.getNavigateToAddCatEvent().observe(this, this::handleNavigateToAddCatEvent);
+        viewModel.getReloadEvent().observe(this, this::handleReloadCatsEvent);
+    }
+
+    private void setUpBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter(CatPostService.CAT_POST_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new CatPostBroadcastReceiver(), intentFilter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        viewModel.clear();
-        onCameraMove();
+        loadCats();
+    }
+
+    private void loadCats() {
+        if (mMap != null) {
+            LatLng target = mMap.getCameraPosition().target;
+            viewModel.loadCats(target);
+        }
     }
 
     private void addCatMarker(Cat cat) {
@@ -79,6 +100,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
             Intent intent = AddCatActivity.getIntent(e.getPayload(), this);
             startActivity(intent);
             e.handled();
+        }
+    }
+
+    private void handleReloadCatsEvent(ViewEvent e) {
+        if (isEventExecutable(e)) {
+            viewModel.clear();
+            loadCats();
         }
     }
 
@@ -117,9 +145,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public void onCameraMove() {
-        if (mMap != null) {
-            LatLng target = mMap.getCameraPosition().target;
-            viewModel.loadCats(target);
+        loadCats();
+    }
+
+    private class CatPostBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean result = intent.getBooleanExtra(CatPostService.EXTRA_RESULT, false);
+            viewModel.notifyCatPostResult(result);
         }
+
     }
 }

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+
 public abstract class CatRepository {
 
     private static CatRepositoryImpl instance;
@@ -34,11 +37,11 @@ public abstract class CatRepository {
 
     public abstract LiveData<FailableData> createCat(String name, LatLng latLng, Uri imageUri);
 
+    public abstract boolean createCatSync(String name, LatLng latLng, Uri imageUri);
+
     private static class CatRepositoryImpl extends CatRepository {
 
         private CatRemoteDataSource catRemoteDataSource;
-        private ExecutorService executorService;
-        private Context appContext;
 
         @Override
         public LiveData<FailableData<List<Cat>>> getCatsByArea(String[] areaCode) {
@@ -62,6 +65,18 @@ public abstract class CatRepository {
             );
         }
 
+        @Override
+        public boolean createCatSync(String name, LatLng latLng, Uri imageUri) {
+            return catRemoteDataSource.createCatSync(
+                    TokenRepository.getInstance().getToken(),
+                    name,
+                    latLng.latitude,
+                    latLng.longitude,
+                    createAreaCode(latLng),
+                    imageUri
+            );
+        }
+
         private String createAreaCode(LatLng latLng) {
             int lat = (int) (100 * latLng.latitude);
             int lng = (int) (100 * latLng.longitude);
@@ -69,9 +84,7 @@ public abstract class CatRepository {
         }
 
         CatRepositoryImpl(Context appContext) {
-            this.appContext = appContext;
             this.catRemoteDataSource = new CatRemoteDataSource(appContext);
-            this.executorService = Executors.newSingleThreadExecutor();
         }
 
     }

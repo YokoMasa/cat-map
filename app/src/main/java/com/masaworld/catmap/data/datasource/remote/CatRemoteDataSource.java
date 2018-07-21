@@ -18,7 +18,10 @@ import java.util.List;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okio.BufferedSink;
+import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -57,14 +60,34 @@ public class CatRemoteDataSource {
     public LiveData<FailableData> createCat(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {
         MutableLiveData<FailableData> liveData = new MutableLiveData<>();
         FailableData failableData = new FailableData();
+        Call<ResponseBody> call = createCatCall(token, name, latitude, longitude, areaCode, imageUri);
+        call.enqueue(new ResponseHandler(failableData, liveData));
+        return liveData;
+    }
+
+    public boolean createCatSync(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {
+        Call<ResponseBody> call = createCatCall(token, name, latitude, longitude, areaCode, imageUri);
+        try {
+            Response response = call.execute();
+            if (response.code() == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+    }
+
+    public Call<ResponseBody> createCatCall(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {
         RequestBody rbName = RequestBody.create(MediaType.parse("text/plain"), name);
         RequestBody rbLongitude = RequestBody.create(MediaType.parse("text/plain"), Double.toString(longitude));
         RequestBody rbLatitude = RequestBody.create(MediaType.parse("text/plain"), Double.toString(latitude));
         RequestBody rbAreaCode = RequestBody.create(MediaType.parse("text/plain"), areaCode);
         RequestBody rbCatImage = createRequestBodyFromUri(MediaType.parse("image/*"), imageUri);
         MultipartBody.Part part = MultipartBody.Part.createFormData("cat_image", "image.jpeg", rbCatImage);
-        catMapService.createCat(token, rbName, rbLatitude, rbLongitude, rbAreaCode, part).enqueue(new ResponseHandler(failableData, liveData));
-        return liveData;
+        return catMapService.createCat(token, rbName, rbLatitude, rbLongitude, rbAreaCode, part);
     }
 
     private RequestBody createRequestBodyFromUri(MediaType mediaType, Uri uri) {

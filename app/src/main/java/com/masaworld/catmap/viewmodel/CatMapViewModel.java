@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.DataDripper;
 import com.masaworld.catmap.data.model.Cat;
 import com.masaworld.catmap.data.repository.CatRepository;
@@ -23,6 +24,7 @@ public class CatMapViewModel extends ViewModel {
     private Set<String> loadedAreas = new HashSet<>();
     private MutableLiveData<ViewEvent<Integer>> toastEvent;
     private MutableLiveData<ViewEvent> loginDialogEvent;
+    private MutableLiveData<ViewEvent> reloadEvent;
     private MutableLiveData<ViewEvent<Integer>> navigateToCatEvent;
     private MutableLiveData<ViewEvent<LatLng>> navigateToAddCatEvent;
 
@@ -44,14 +46,15 @@ public class CatMapViewModel extends ViewModel {
 
     public LiveData<ViewEvent<LatLng>> getNavigateToAddCatEvent() { return navigateToAddCatEvent; }
 
+    public LiveData<ViewEvent> getReloadEvent() { return reloadEvent; }
+
     public void loadCats(LatLng newPosition) {
         String[] areaCodes = getSurroundingAreaCode(newPosition);
         if (areaCodes.length != 0) {
             repository.getCatsByArea(areaCodes).observeForever(listFailableData -> {
                 if (listFailableData != null) {
                     if (listFailableData.failed) {
-                        ViewEvent<Integer> e = new ViewEvent<>(listFailableData.error.messageId);
-                        toastEvent.setValue(e);
+                        toastEvent.setValue(new ViewEvent<>(listFailableData.error.messageId));
                     } else {
                         cats.add(listFailableData.data);
                     }
@@ -62,17 +65,24 @@ public class CatMapViewModel extends ViewModel {
 
     public void addNewCat(LatLng latLng) {
         if (TokenRepository.getInstance().hasToken()) {
-            ViewEvent<LatLng> e = new ViewEvent<>(latLng);
-            navigateToAddCatEvent.setValue(e);
+            navigateToAddCatEvent.setValue(new ViewEvent<>(latLng));
         } else {
-            ViewEvent e = new ViewEvent<>("");
-            loginDialogEvent.setValue(e);
+            loginDialogEvent.setValue(new ViewEvent(null));
         }
     }
 
     public void showCat(int id) {
         ViewEvent<Integer> e = new ViewEvent<>(id);
         navigateToCatEvent.setValue(e);
+    }
+
+    public void notifyCatPostResult(boolean result) {
+        if (result) {
+            toastEvent.setValue(new ViewEvent<>(R.string.added_cat));
+            reloadEvent.setValue(new ViewEvent(null));
+        } else {
+            toastEvent.setValue(new ViewEvent<>(R.string.failed_to_add_cat));
+        }
     }
 
     public void clear() {
@@ -106,5 +116,6 @@ public class CatMapViewModel extends ViewModel {
         loginDialogEvent = new MutableLiveData<>();
         navigateToCatEvent = new MutableLiveData<>();
         navigateToAddCatEvent = new MutableLiveData<>();
+        reloadEvent = new MutableLiveData<>();
     }
 }

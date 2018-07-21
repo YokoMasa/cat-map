@@ -12,6 +12,8 @@
     <string name="added_cat">ネコを追加しました。</string>
     <string name="uncompleted_form">情報が足りません！</string>
     <string name="name">名前</string>
+    <string name="adding_cat">ネコを追加中...</string>
+    <string name="failed_to_add_cat">ネコを追加できませんでした</string>
 
     <string name="from_camera">写真を撮る</string>
     <string name="from_album">アルバムから選ぶ</string>

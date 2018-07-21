@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.repository.CatRepository;
+import com.masaworld.catmap.service.CatPostService;
 import com.masaworld.catmap.ui.fragment.LoadingFragment;
 import com.masaworld.catmap.viewmodel.AddCatViewModel;
 import com.masaworld.catmap.viewmodel.ViewEvent;
@@ -34,10 +35,10 @@ public class AddCatActivity extends ImagePickableActivity {
     private static final String EXTRA_LATLNG = "latLng";
     private AddCatViewModel viewModel;
     private ImageView imageView;
-    private Button button;
     private EditText nameField;
+    private Button button;
+    private LatLng latLng;
     private Uri imageUri;
-    private boolean loading;
 
     public static Intent getIntent(LatLng latLng, Context context) {
         Intent intent = new Intent(context, AddCatActivity.class);
@@ -50,6 +51,7 @@ public class AddCatActivity extends ImagePickableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_cat);
         setUpViewModel();
+        latLng = getIntent().getParcelableExtra(EXTRA_LATLNG);
         nameField = findViewById(R.id.add_cat_name);
         imageView = findViewById(R.id.add_cat_image);
         imageView.setOnClickListener(view -> {
@@ -57,8 +59,8 @@ public class AddCatActivity extends ImagePickableActivity {
         });
         button = findViewById(R.id.add_cat_submit);
         button.setOnClickListener(view -> {
-            LatLng latLng = getIntent().getParcelableExtra(EXTRA_LATLNG);
             viewModel.createCat(nameField.getText().toString(), latLng, imageUri);
+            button.setEnabled(false);
         });
     }
 
@@ -66,28 +68,20 @@ public class AddCatActivity extends ImagePickableActivity {
         viewModel = ViewModelProviders.of(this).get(AddCatViewModel.class);
         viewModel.getGoBackEvent().observe(this, this::handleGoBackEvent);
         viewModel.getShowToastEvent().observe(this, this::handleToastEvent);
-        viewModel.getShowLoadingEvent().observe(this, this::handleShowLoadingEvent);
+        viewModel.getStartServiceEvent().observe(this, this::handleStartServiceEvent);
     }
 
     private void handleGoBackEvent(ViewEvent e) {
         if (isEventExecutable(e)) {
-            loading = false;
             onBackPressed();
             e.handled();
         }
     }
 
-    private void handleShowLoadingEvent(ViewEvent e) {
+    private void handleStartServiceEvent(ViewEvent e) {
         if (isEventExecutable(e)) {
-            imageView.setImageBitmap(null);
-            button.setEnabled(false);
-            loading = true;
-
-            Fragment f = new LoadingFragment();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.add_cat_mother, f);
-            ft.setCustomAnimations(R.anim.loading_fragment_add_animation, R.anim.loading_fragment_add_animation);
-            ft.commit();
+            Intent intent = CatPostService.getIntent(nameField.getText().toString(), latLng, imageUri, this);
+            startService(intent);
             e.handled();
         }
     }
@@ -99,10 +93,8 @@ public class AddCatActivity extends ImagePickableActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (loading) {
-            return;
-        }
-        super.onBackPressed();
+    protected void onDestroy() {
+        super.onDestroy();
+        imageView.setImageBitmap(null);
     }
 }
