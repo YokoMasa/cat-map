@@ -29,7 +29,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <service android:name=".service.CatPostService"/>
+        <service
+            android:name=".service.CatPostService"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -42,6 +43,7 @@
         </provider>
 
         <activity
+            android:screenOrientation="portrait"
             android:name=".ui.activity.MapsActivity"
             android:label="@string/title_activity_maps">
             <intent-filter>
@@ -51,11 +53,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activity.CatActivity"/>
+        <activity
+            android:name=".ui.activity.CatActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activity.LoginActivity"/>
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activity.AddCatActivity"/>
+        <activity
+            android:name=".ui.activity.AddCatActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 
