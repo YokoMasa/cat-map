@@ -14,6 +14,7 @@ public class AddCatViewModel extends ViewModel {
     MutableLiveData<ViewEvent<Integer>> showToastEvent;
     MutableLiveData<ViewEvent> goBackEvent;
     MutableLiveData<ViewEvent> startServiceEvent;
+    MutableLiveData<ViewEvent<Boolean>> buttonEnableEvent;
 
     public LiveData<ViewEvent<Integer>> getShowToastEvent() {
         return showToastEvent;
@@ -27,17 +28,19 @@ public class AddCatViewModel extends ViewModel {
         return startServiceEvent;
     }
 
+    public LiveData<ViewEvent<Boolean>> getButtonEnableEvent() { return buttonEnableEvent; }
+
     public void createCat(String name, LatLng latLng, Uri imageUri) {
         if (!validateCreateCat(name, latLng, imageUri)) {
             showToastEvent.setValue(new ViewEvent<>(R.string.uncompleted_form));
             return;
         }
-
+        buttonEnableEvent.setValue(new ViewEvent<>(false));
         startServiceEvent.setValue(new ViewEvent(null));
         goBackEvent.setValue(new ViewEvent(null));
     }
 
-    public boolean validateCreateCat(String name, LatLng latLng, Uri uri) {
+    private boolean validateCreateCat(String name, LatLng latLng, Uri uri) {
         if (name == null || name.length() == 0 || latLng == null || uri == null) {
             return false;
         }
@@ -48,6 +51,7 @@ public class AddCatViewModel extends ViewModel {
         showToastEvent = new MutableLiveData<>();
         goBackEvent = new MutableLiveData<>();
         startServiceEvent = new MutableLiveData<>();
+        buttonEnableEvent = new MutableLiveData<>();
     }
 
 }

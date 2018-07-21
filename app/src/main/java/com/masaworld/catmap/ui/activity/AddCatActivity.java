@@ -60,7 +60,6 @@ public class AddCatActivity extends ImagePickableActivity {
         button = findViewById(R.id.add_cat_submit);
         button.setOnClickListener(view -> {
             viewModel.createCat(nameField.getText().toString(), latLng, imageUri);
-            button.setEnabled(false);
         });
     }
 
@@ -69,6 +68,7 @@ public class AddCatActivity extends ImagePickableActivity {
         viewModel.getGoBackEvent().observe(this, this::handleGoBackEvent);
         viewModel.getShowToastEvent().observe(this, this::handleToastEvent);
         viewModel.getStartServiceEvent().observe(this, this::handleStartServiceEvent);
+        viewModel.getButtonEnableEvent().observe(this, this::handleButtonEnableEvent);
     }
 
     private void handleGoBackEvent(ViewEvent e) {
@@ -83,6 +83,12 @@ public class AddCatActivity extends ImagePickableActivity {
             Intent intent = CatPostService.getIntent(nameField.getText().toString(), latLng, imageUri, this);
             startService(intent);
             e.handled();
+        }
+    }
+
+    private void handleButtonEnableEvent(ViewEvent<Boolean> e) {
+        if (isEventExecutable(e)) {
+            button.setEnabled(e.getPayload());
         }
     }
 
