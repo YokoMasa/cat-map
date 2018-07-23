@@ -32,6 +32,9 @@
         <service
             android:name=".service.CatPostService"/>
 
+        <service
+            android:name=".service.CatImagePostService"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.masaworld.fileprovider"

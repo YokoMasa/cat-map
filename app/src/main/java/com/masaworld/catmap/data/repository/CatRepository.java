@@ -39,7 +39,7 @@ public abstract class CatRepository {
 
     public abstract boolean createCatSync(String name, LatLng latLng, Uri imageUri);
 
-    public abstract boolean createCatImageSync(Cat cat, Uri imageUri);
+    public abstract boolean createCatImageSync(int catId, Uri imageUri);
 
     private static class CatRepositoryImpl extends CatRepository {
 
@@ -80,10 +80,10 @@ public abstract class CatRepository {
         }
 
         @Override
-        public boolean createCatImageSync(Cat cat, Uri imageUri) {
+        public boolean createCatImageSync(int catId, Uri imageUri) {
             return catRemoteDataSource.createCatImageSync(
                     TokenRepository.getInstance().getToken(),
-                    cat.id,
+                    catId,
                     imageUri
             );
         }

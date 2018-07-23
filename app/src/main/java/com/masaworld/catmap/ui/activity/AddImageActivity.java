@@ -1,5 +1,7 @@
 package com.masaworld.catmap.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,11 +12,19 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.masaworld.catmap.R;
+import com.masaworld.catmap.service.CatImagePostService;
 
 public class AddImageActivity extends ImagePickableActivity {
 
+    private static final String EXTRA_ID = "cat_id";
     private ImageView imageView;
     private Uri imageUri;
+
+    public static Intent getIntent(int catId, Context context) {
+        Intent intent = new Intent(context, AddImageActivity.class);
+        intent.putExtra(EXTRA_ID, catId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,8 +40,19 @@ public class AddImageActivity extends ImagePickableActivity {
         });
         Button button = findViewById(R.id.add_image_submit);
         button.setOnClickListener(view -> {
-
+            if (imageUri != null) {
+                startImagePostService();
+                onBackPressed();
+            } else {
+                showToast(R.string.uncompleted_form);
+            }
         });
+    }
+
+    private void startImagePostService() {
+        int catId = getIntent().getIntExtra(EXTRA_ID, -1);
+        Intent intent = CatImagePostService.getIntent(catId, imageUri, this);
+        startService(intent);
     }
 
     @Override

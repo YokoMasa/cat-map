@@ -26,6 +26,7 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
 
     private ImageListViewModel viewModel;
     private ImageListAdapter adapter;
+    private int catId;
 
     public static Intent getIntent(int id, Context context) {
         Intent intent = new Intent(context, ImageListActivity.class);
@@ -40,7 +41,7 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
         setUpViews();
         setUpViewModel();
 
-        int catId = getIntent().getIntExtra(EXTRA_ID, -1);
+        catId = getIntent().getIntExtra(EXTRA_ID, -1);
         viewModel.loadImages(catId);
     }
 
