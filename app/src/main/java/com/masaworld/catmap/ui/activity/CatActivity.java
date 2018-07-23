@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -49,6 +51,12 @@ public class CatActivity extends BaseActivity {
         getSupportActionBar().setTitle("");
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.cat_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void handleCat(Cat cat) {
         if (cat == null) {
             return;
@@ -61,11 +69,24 @@ public class CatActivity extends BaseActivity {
         }
     }
 
+    private void showImageList() {
+        int id = getIntent().getIntExtra(EXTRA_ID, -1);
+        Intent intent = ImageListActivity.getIntent(id, this);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.menu_comments:
+                showToast("comments");
+                return true;
+            case R.id.menu_images:
+                showImageList();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

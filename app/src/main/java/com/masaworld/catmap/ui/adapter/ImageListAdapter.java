@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.masaworld.catmap.Config;
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.ImageInfo;
 
@@ -23,6 +24,7 @@ public class ImageListAdapter extends RecyclerView.Adapter {
 
     public void setImages(List<ImageInfo> images) {
         this.images = images;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -60,7 +62,8 @@ public class ImageListAdapter extends RecyclerView.Adapter {
         ImageView imageView;
 
         void bind(ImageInfo imageInfo) {
-            Glide.with(context).load(imageInfo.thumbnail).into(imageView);
+            String url = Config.BASE_URL + imageInfo.thumbnail;
+            Glide.with(context).load(url).into(imageView);
         }
 
         ImageListViewHolder(View itemView) {

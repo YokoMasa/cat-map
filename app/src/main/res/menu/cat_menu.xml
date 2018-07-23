@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="@string/comments"
+        android:id="@+id/menu_comments"
+        app:showAsAction="always"
+        android:icon="@drawable/menu_comments"/>
+    <item
+        android:title="@string/images"
+        android:id="@+id/menu_images"
+        app:showAsAction="always"
+        android:icon="@drawable/menu_image"/>
+</menu>
