@@ -34,4 +34,10 @@ public interface CatMapService {
                                  @Part("area_code") RequestBody areaCode,
                                  @Part MultipartBody.Part catImage);
 
+    @Multipart
+    @POST("/cat/image/create/")
+    Call<ResponseBody> createCatImage(@Header("Authorization") String token,
+                                      @Part("cat_id") RequestBody catId,
+                                      @Part MultipartBody.Part catImage);
+
 }

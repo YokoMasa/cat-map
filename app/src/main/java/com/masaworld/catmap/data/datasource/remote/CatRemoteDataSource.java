@@ -27,8 +27,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CatRemoteDataSource {
 
-    private static final String MIME_TEXT = "text/plain";
-    private static final String MIME_IMAGE = "image/*";
+    private static final MediaType MEDIA_TEXT = MediaType.parse("text/plain");
+    private static final MediaType MEDIA_IMAGE = MediaType.parse("image/*");
     private CatMapService catMapService;
     private Context appContext;
 
@@ -69,25 +69,39 @@ public class CatRemoteDataSource {
         Call<ResponseBody> call = createCatCall(token, name, latitude, longitude, areaCode, imageUri);
         try {
             Response response = call.execute();
-            if (response.code() == 200) {
-                return true;
-            } else {
-                return false;
-            }
+            return response.code() == 200;
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return false;
         }
     }
 
-    public Call<ResponseBody> createCatCall(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {
-        RequestBody rbName = RequestBody.create(MediaType.parse("text/plain"), name);
-        RequestBody rbLongitude = RequestBody.create(MediaType.parse("text/plain"), Double.toString(longitude));
-        RequestBody rbLatitude = RequestBody.create(MediaType.parse("text/plain"), Double.toString(latitude));
-        RequestBody rbAreaCode = RequestBody.create(MediaType.parse("text/plain"), areaCode);
-        RequestBody rbCatImage = createRequestBodyFromUri(MediaType.parse("image/*"), imageUri);
+    private Call<ResponseBody> createCatCall(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {
+        RequestBody rbName = RequestBody.create(MEDIA_TEXT, name);
+        RequestBody rbLongitude = RequestBody.create(MEDIA_TEXT, Double.toString(longitude));
+        RequestBody rbLatitude = RequestBody.create(MEDIA_TEXT, Double.toString(latitude));
+        RequestBody rbAreaCode = RequestBody.create(MEDIA_TEXT, areaCode);
+        RequestBody rbCatImage = createRequestBodyFromUri(MEDIA_IMAGE, imageUri);
         MultipartBody.Part part = MultipartBody.Part.createFormData("cat_image", "image.jpeg", rbCatImage);
         return catMapService.createCat(token, rbName, rbLatitude, rbLongitude, rbAreaCode, part);
+    }
+
+    public boolean createCatImageSync(String token, int catId, Uri imageUri) {
+        Call<ResponseBody> call = createCatImageCall(token, catId, imageUri);
+        try {
+            Response response = call.execute();
+            return response.code() == 200;
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+    }
+
+    private Call<ResponseBody> createCatImageCall(String token, int catId, Uri imageUri) {
+        RequestBody rbCatId = RequestBody.create(MediaType.parse("text/plain"), Integer.toString(catId));
+        RequestBody rbCatImage = createRequestBodyFromUri(MEDIA_IMAGE, imageUri);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("cat_image", "image.jpeg", rbCatImage);
+        return catMapService.createCatImage(token, rbCatId, part);
     }
 
     private RequestBody createRequestBodyFromUri(MediaType mediaType, Uri uri) {

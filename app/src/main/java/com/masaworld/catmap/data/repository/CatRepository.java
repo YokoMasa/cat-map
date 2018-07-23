@@ -39,6 +39,8 @@ public abstract class CatRepository {
 
     public abstract boolean createCatSync(String name, LatLng latLng, Uri imageUri);
 
+    public abstract boolean createCatImageSync(Cat cat, Uri imageUri);
+
     private static class CatRepositoryImpl extends CatRepository {
 
         private CatRemoteDataSource catRemoteDataSource;
@@ -73,6 +75,15 @@ public abstract class CatRepository {
                     latLng.latitude,
                     latLng.longitude,
                     createAreaCode(latLng),
+                    imageUri
+            );
+        }
+
+        @Override
+        public boolean createCatImageSync(Cat cat, Uri imageUri) {
+            return catRemoteDataSource.createCatImageSync(
+                    TokenRepository.getInstance().getToken(),
+                    cat.id,
                     imageUri
             );
         }
