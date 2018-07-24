@@ -24,7 +24,7 @@ import com.masaworld.catmap.viewmodel.ViewEvent;
 
 import java.util.List;
 
-public class ImageListActivity extends BaseActivity implements LoginCheckDialogFragment.LoginCheckCallback {
+public class ImageListActivity extends BaseActivity implements LoginCheckDialogFragment.LoginCheckCallback, ImageListAdapter.ImageClickListener {
 
     private static final int COLUMN_COUNT = 3;
     private static final String EXTRA_ID = "cat_id";
@@ -59,6 +59,7 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
 
         RecyclerView recyclerView = findViewById(R.id.image_list_recycler_view);
         adapter = new ImageListAdapter(this);
+        adapter.setImageClickeListener(this);
         recyclerView.setAdapter(adapter);
         GridLayoutManager layoutManager = new GridLayoutManager(this, COLUMN_COUNT);
         recyclerView.setLayoutManager(layoutManager);
@@ -100,6 +101,12 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
             startActivity(intent);
             e.handled();
         }
+    }
+
+    @Override
+    public void onImageClicked(String imageUrl) {
+        Intent intent = ImageActivity.getIntent(imageUrl, this);
+        startActivity(intent);
     }
 
     @Override

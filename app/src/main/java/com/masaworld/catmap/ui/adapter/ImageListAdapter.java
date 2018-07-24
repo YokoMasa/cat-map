@@ -21,6 +21,11 @@ public class ImageListAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<ImageInfo> images;
+    private ImageClickListener listener;
+
+    public void setImageClickeListener(ImageClickListener listener) {
+        this.listener = listener;
+    }
 
     public void setImages(List<ImageInfo> images) {
         this.images = images;
@@ -60,16 +65,27 @@ public class ImageListAdapter extends RecyclerView.Adapter {
     class ImageListViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
+        ImageInfo imageInfo;
 
         void bind(ImageInfo imageInfo) {
+            this.imageInfo = imageInfo;
             String url = Config.BASE_URL + imageInfo.thumbnail;
             Glide.with(context).load(url).into(imageView);
+            imageView.setOnClickListener(view -> {
+                if (listener != null) {
+                    listener.onImageClicked(Config.BASE_URL + imageInfo.raw_image);
+                }
+            });
         }
 
         ImageListViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_list_element_image_view);
         }
+    }
+
+    public interface ImageClickListener {
+        public void onImageClicked(String imageUrl);
     }
 
 }
