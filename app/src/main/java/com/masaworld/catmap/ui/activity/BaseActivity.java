@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.masaworld.catmap.R;
 import com.masaworld.catmap.ui.fragment.LoadingFragment;
 import com.masaworld.catmap.viewmodel.ViewEvent;
 
@@ -42,6 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         Fragment f = getSupportFragmentManager().findFragmentByTag(LOADING_FRAGMENT_TAG);
         if (f != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(android.R.anim.fade_out, android.R.anim.fade_out);
             ft.remove(f);
             ft.commit();
         }
