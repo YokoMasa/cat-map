@@ -1,10 +1,14 @@
 package com.masaworld.catmap.ui.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +16,7 @@ import android.view.MenuItem;
 
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.ImageInfo;
+import com.masaworld.catmap.service.CatImagePostService;
 import com.masaworld.catmap.ui.adapter.ImageListAdapter;
 import com.masaworld.catmap.ui.fragment.LoginCheckDialogFragment;
 import com.masaworld.catmap.viewmodel.ImageListViewModel;
@@ -40,6 +45,7 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
         setContentView(R.layout.activity_image_list);
         setUpViews();
         setUpViewModel();
+        setUpBroadcastReceiver();
 
         catId = getIntent().getIntExtra(EXTRA_ID, -1);
         viewModel.loadImages(catId);
@@ -56,6 +62,11 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
         recyclerView.setAdapter(adapter);
         GridLayoutManager layoutManager = new GridLayoutManager(this, COLUMN_COUNT);
         recyclerView.setLayoutManager(layoutManager);
+
+        FloatingActionButton fab = findViewById(R.id.image_list_fab);
+        fab.setOnClickListener(view -> {
+            viewModel.addImage();
+        });
     }
 
     private void setUpViewModel() {
@@ -63,6 +74,12 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
         viewModel.getImages().observe(this, this::handleImages);
         viewModel.getToastEvent().observe(this, this::handleToastEvent);
         viewModel.getLoginDialogEvent().observe(this, this::handleShowLoginDialogEvent);
+        viewModel.getNavigateToAddImageEvent().observe(this, this::handleNavigateToAddImageEvent);
+    }
+
+    private void setUpBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter(CatImagePostService.CAT_IMAGE_POST_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new CatImagePostBroadcastReceiver(), intentFilter);
     }
 
     private void handleImages(List<ImageInfo>images) {
@@ -73,6 +90,14 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
         if (isEventExecutable(e)) {
             LoginCheckDialogFragment f = new LoginCheckDialogFragment();
             f.show(getSupportFragmentManager(), null);
+            e.handled();
+        }
+    }
+
+    private void handleNavigateToAddImageEvent(ViewEvent e) {
+        if (isEventExecutable(e)) {
+            Intent intent = AddImageActivity.getIntent(catId, this);
+            startActivity(intent);
             e.handled();
         }
     }
@@ -91,5 +116,13 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
     public void onLoginAccepted() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    class CatImagePostBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean b = intent.getBooleanExtra(CatImagePostService.EXTRA_RESULT, false);
+            viewModel.notifyImagePostResult(b);
+        }
     }
 }

@@ -17,6 +17,8 @@
     <string name="images">画像</string>
     <string name="add_image">画像を追加</string>
     <string name="adding_image">画像を追加中...</string>
+    <string name="added_image">画像を追加しました</string>
+    <string name="failed_to_add_image">画像の追加に失敗しました</string>
     <string name="comments">コメント</string>
 
     <string name="from_camera">写真を撮る</string>
