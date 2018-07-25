@@ -35,9 +35,9 @@ public interface CatMapService {
                                  @Part MultipartBody.Part catImage);
 
     @Multipart
-    @POST("/cat/image/create/")
+    @POST("/cat/{id}/image/create/")
     Call<ResponseBody> createCatImage(@Header("Authorization") String token,
-                                      @Part("cat_id") RequestBody catId,
+                                      @Path("id") int id,
                                       @Part MultipartBody.Part catImage);
 
 }

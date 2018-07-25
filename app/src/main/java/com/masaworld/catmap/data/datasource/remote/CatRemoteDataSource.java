@@ -98,10 +98,9 @@ public class CatRemoteDataSource {
     }
 
     private Call<ResponseBody> createCatImageCall(String token, int catId, Uri imageUri) {
-        RequestBody rbCatId = RequestBody.create(MediaType.parse("text/plain"), Integer.toString(catId));
         RequestBody rbCatImage = createRequestBodyFromUri(MEDIA_IMAGE, imageUri);
         MultipartBody.Part part = MultipartBody.Part.createFormData("cat_image", "image.jpeg", rbCatImage);
-        return catMapService.createCatImage(token, rbCatId, part);
+        return catMapService.createCatImage(token, catId, part);
     }
 
     private RequestBody createRequestBodyFromUri(MediaType mediaType, Uri uri) {
