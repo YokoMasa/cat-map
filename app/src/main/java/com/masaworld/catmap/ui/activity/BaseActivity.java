@@ -35,12 +35,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void showLoadingFragment(int motherId) {
-        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-            Fragment f = new LoadingFragment();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(motherId, f, LOADING_FRAGMENT_TAG);
-            ft.commit();
-        }
+        Fragment f = new LoadingFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.add(motherId, f, LOADING_FRAGMENT_TAG);
+        ft.commit();
     }
 
     protected void hideLoadingFragment() {

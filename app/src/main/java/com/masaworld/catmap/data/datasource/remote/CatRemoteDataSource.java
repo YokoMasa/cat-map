@@ -73,6 +73,15 @@ public class CatRemoteDataSource {
         return liveData;
     }
 
+    public LiveData<FailableData> createCatComment(String token, String comment, int catId) {
+        MutableLiveData<FailableData> liveData = new MutableLiveData<>();
+        FailableData failableData = new FailableData();
+        RequestBody rbComment = RequestBody.create(MEDIA_TEXT, comment);
+        Call<ResponseBody> call = catMapService.createCatComment(token, catId, rbComment);
+        call.enqueue(new ResponseHandler(failableData, liveData));
+        return liveData;
+    }
+
     public boolean createCatSync(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {
         Call<ResponseBody> call = createCatCall(token, name, latitude, longitude, areaCode, imageUri);
         try {

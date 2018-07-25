@@ -40,6 +40,8 @@ public abstract class CatRepository {
 
     public abstract LiveData<FailableData> createCat(String name, LatLng latLng, Uri imageUri);
 
+    public abstract LiveData<FailableData> createCatComment(String comment, int catId);
+
     public abstract boolean createCatSync(String name, LatLng latLng, Uri imageUri);
 
     public abstract boolean createCatImageSync(int catId, Uri imageUri);
@@ -61,6 +63,15 @@ public abstract class CatRepository {
         @Override
         public LiveData<FailableData<List<CatComment>>> getCatComments(int catId) {
             return catRemoteDataSource.getCatComments(catId);
+        }
+
+        @Override
+        public LiveData<FailableData> createCatComment(String comment, int catId) {
+            return catRemoteDataSource.createCatComment(
+                    TokenRepository.getInstance().getToken(),
+                    comment,
+                    catId
+            );
         }
 
         @Override

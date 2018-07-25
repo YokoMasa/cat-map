@@ -7,4 +7,5 @@
     <color name="text_black">#555555</color>
     <color name="login_button_color">@color/colorPrimary</color>
     <color name="login_button_color_pressed">#99776a</color>
+    <color name="comment_background">#d1FFFFFF</color>
 </resources>
