@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.masaworld.catmap.Config;
+import com.masaworld.catmap.data.model.CatComment;
 import com.masaworld.catmap.data.service.CatMapService;
 import com.masaworld.catmap.data.FailableData;
 import com.masaworld.catmap.data.model.Cat;
@@ -55,6 +56,13 @@ public class CatRemoteDataSource {
         FailableData<List<Cat>> data = new FailableData<>();
         catMapService.getCatList(areaCode).enqueue(new ResponseHandler<>(data, catList));
         return catList;
+    }
+
+    public LiveData<FailableData<List<CatComment>>> getCatComments(int catId) {
+        MutableLiveData<FailableData<List<CatComment>>> data = new MutableLiveData<>();
+        FailableData<List<CatComment>> failableData = new FailableData<>();
+        catMapService.getCatComments(catId).enqueue(new ResponseHandler<>(failableData, data));
+        return data;
     }
 
     public LiveData<FailableData> createCat(String token, String name, double latitude, double longitude, String areaCode, Uri imageUri) {

@@ -35,21 +35,16 @@ public class ImageActivity extends BaseActivity {
         Glide.with(this).load(url).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                safelyHideLoading();
+                hideLoadingFragment();
                 return true;
             }
 
             @Override
             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                safelyHideLoading();
+                hideLoadingFragment();
                 return false;
             }
         }).into(imageView);
     }
 
-    private void safelyHideLoading() {
-        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-            hideLoadingFragment();
-        }
-    }
 }

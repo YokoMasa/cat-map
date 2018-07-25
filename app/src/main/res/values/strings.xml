@@ -20,6 +20,7 @@
     <string name="added_image">画像を追加しました</string>
     <string name="failed_to_add_image">画像の追加に失敗しました</string>
     <string name="comments">コメント</string>
+    <string name="close">閉じる</string>
 
     <string name="from_camera">写真を撮る</string>
     <string name="from_album">アルバムから選ぶ</string>

@@ -1,6 +1,7 @@
 package com.masaworld.catmap.data.service;
 
 import com.masaworld.catmap.data.model.Cat;
+import com.masaworld.catmap.data.model.CatComment;
 
 import java.util.List;
 
@@ -22,8 +23,17 @@ public interface CatMapService {
     @GET("/cat/list/")
     Call<List<Cat>> getCatList(@Query("area") String... area);
 
-    @GET("/cat/{id}")
+    @GET("/cat/{id}/")
     Call<Cat> getCat(@Path("id") int id);
+
+    @GET("/cat/{id}/comment/")
+    Call<List<CatComment>> getCatComments(@Path("id") int catId);
+
+    @Multipart
+    @POST("/cat/{id}/comment/create/")
+    Call<ResponseBody> createCatComment(@Header("Authorization") String token,
+                                        @Path("id") int catId,
+                                        @Part("comment") RequestBody comment);
 
     @Multipart
     @POST("/cat/create/")

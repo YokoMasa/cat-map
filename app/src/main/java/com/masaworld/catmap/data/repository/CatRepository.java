@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.masaworld.catmap.data.FailableData;
 import com.masaworld.catmap.data.datasource.remote.CatRemoteDataSource;
 import com.masaworld.catmap.data.model.Cat;
+import com.masaworld.catmap.data.model.CatComment;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -35,6 +36,8 @@ public abstract class CatRepository {
 
     public abstract LiveData<FailableData<Cat>> getCat(int id);
 
+    public abstract LiveData<FailableData<List<CatComment>>> getCatComments(int catId);
+
     public abstract LiveData<FailableData> createCat(String name, LatLng latLng, Uri imageUri);
 
     public abstract boolean createCatSync(String name, LatLng latLng, Uri imageUri);
@@ -53,6 +56,11 @@ public abstract class CatRepository {
         @Override
         public LiveData<FailableData<Cat>> getCat(int id) {
             return catRemoteDataSource.getCat(id);
+        }
+
+        @Override
+        public LiveData<FailableData<List<CatComment>>> getCatComments(int catId) {
+            return catRemoteDataSource.getCatComments(catId);
         }
 
         @Override

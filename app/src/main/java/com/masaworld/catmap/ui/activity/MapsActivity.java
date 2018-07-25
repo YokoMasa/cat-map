@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,6 +22,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.Cat;
+import com.masaworld.catmap.data.model.CatComment;
+import com.masaworld.catmap.data.repository.CatRepository;
+import com.masaworld.catmap.data.service.CatMapService;
 import com.masaworld.catmap.service.CatPostService;
 import com.masaworld.catmap.ui.fragment.LoginCheckDialogFragment;
 import com.masaworld.catmap.viewmodel.CatMapViewModel;
@@ -122,7 +126,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         LatLng chiba = new LatLng(35.645089, 140.040902);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(chiba));
         onCameraMove();
-
     }
 
     @Override
