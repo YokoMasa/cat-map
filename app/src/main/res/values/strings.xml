@@ -1,11 +1,16 @@
 <resources>
     <string name="app_name">CatMap</string>
     <string name="title_activity_maps">Map</string>
-    <string name="login_check_message">ネコをマップに追加するにはログインする必要があります。ログインしますか？</string>
-    <string name="login_check_title">ネコをマップに追加</string>
+    <string name="login_check_message_add_cat">ネコをマップに追加するにはログインする必要があります。ログインしますか？</string>
+    <string name="login_check_title_add_cat">ネコをマップに追加</string>
+    <string name="login_check_message_add_image">画像を追加するにはログインする必要があります。ログインしますか？</string>
+    <string name="login_check_title_add_image">画像を追加</string>
+    <string name="login_check_message_add_comment">コメントを追加するにはログインする必要があります。ログインしますか？</string>
+    <string name="login_check_title_add_comment">コメントを追加</string>
     <string name="login_email">メールアドレス</string>
     <string name="login_password">パスワード</string>
     <string name="login">ログイン</string>
+    <string name="login_succeeded">ログインしました</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="add">追加</string>

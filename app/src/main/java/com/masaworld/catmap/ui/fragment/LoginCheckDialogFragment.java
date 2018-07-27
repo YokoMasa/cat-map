@@ -12,7 +12,18 @@ import com.masaworld.catmap.R;
 
 public class LoginCheckDialogFragment extends DialogFragment {
 
+    private static final String EXTRA_TITLE = "extra_title";
+    private static final String EXTRA_MESSAGE = "extra_message";
     private LoginCheckCallback callback;
+
+    public static DialogFragment get(int titleId, int messageId) {
+        DialogFragment f = new LoginCheckDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(EXTRA_TITLE, titleId);
+        bundle.putInt(EXTRA_MESSAGE, messageId);
+        f.setArguments(bundle);
+        return f;
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -25,9 +36,16 @@ public class LoginCheckDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            throw new IllegalArgumentException("Please set arguments to this fragment before attaching.");
+        }
+
+        int titleId = bundle.getInt(EXTRA_TITLE);
+        int messageId = bundle.getInt(EXTRA_MESSAGE);
         return new AlertDialog.Builder(getContext())
-                .setTitle(R.string.login_check_title)
-                .setMessage(R.string.login_check_message)
+                .setTitle(titleId)
+                .setMessage(messageId)
                 .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                     notifyCallback();
                     dismiss();

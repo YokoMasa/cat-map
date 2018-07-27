@@ -89,8 +89,7 @@ public class ImageListActivity extends BaseActivity implements LoginCheckDialogF
 
     private void handleShowLoginDialogEvent(ViewEvent e) {
         if (isEventExecutable(e)) {
-            LoginCheckDialogFragment f = new LoginCheckDialogFragment();
-            f.show(getSupportFragmentManager(), null);
+            showLoginDialog(R.string.login_check_title_add_image, R.string.login_check_message_add_image);
             e.handled();
         }
     }

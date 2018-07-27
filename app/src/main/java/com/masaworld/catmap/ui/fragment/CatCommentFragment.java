@@ -1,9 +1,11 @@
 package com.masaworld.catmap.ui.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,13 +23,14 @@ import android.widget.Toast;
 
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.CatComment;
+import com.masaworld.catmap.ui.activity.LoginActivity;
 import com.masaworld.catmap.ui.adapter.CommentListAdapter;
 import com.masaworld.catmap.viewmodel.CatCommentFragmentViewModel;
 import com.masaworld.catmap.viewmodel.ViewEvent;
 
 import java.util.List;
 
-public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemClickListener, OnBackPressedListener {
+public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemClickListener, OnBackPressedListener, LoginCheckDialogFragment.LoginCheckCallback {
 
     private static final String EXTRA_ID = "cat_id";
     private static final String TAG = "cat_comment_fragment";
@@ -116,12 +119,20 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
 
     private void handleLoginDialogEvent(ViewEvent e) {
         if (isEventExecutable(e)) {
-
+            DialogFragment f = LoginCheckDialogFragment.get(R.string.login_check_title_add_comment, R.string.login_check_message_add_comment);
+            f.show(getChildFragmentManager(), null);
+            e.handled();
         }
     }
 
     private boolean isEventExecutable(ViewEvent e) {
         return e != null && !e.isHandled();
+    }
+
+    @Override
+    public void onLoginAccepted() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override

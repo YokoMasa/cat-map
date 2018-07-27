@@ -34,7 +34,7 @@ import com.masaworld.catmap.viewmodel.CatMapViewModel;
 import com.masaworld.catmap.viewmodel.ViewEvent;
 
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
-        GoogleMap.OnCameraMoveListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, LoginCheckDialogFragment.LoginCheckCallback {
+        GoogleMap.OnCameraMoveListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
 
     private static final int PERMISSION_REQUEST_LOCATION =1458;
     private GoogleMap mMap;
@@ -123,8 +123,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
     private void handleShowLoginDialogEvent(ViewEvent e) {
         if (isEventExecutable(e)) {
-            LoginCheckDialogFragment f = new LoginCheckDialogFragment();
-            f.show(getSupportFragmentManager(), null);
+            showLoginDialog(R.string.login_check_title_add_cat, R.string.login_check_message_add_cat);
             e.handled();
         }
     }
@@ -171,12 +170,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         mMap.setOnMapClickListener(this);
 
         onCameraMove();
-    }
-
-    @Override
-    public void onLoginAccepted() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.masaworld.catmap.ui.activity;
 
 import android.arch.lifecycle.Lifecycle;
+import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +10,11 @@ import android.widget.Toast;
 
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.ui.fragment.LoadingFragment;
+import com.masaworld.catmap.ui.fragment.LoginCheckDialogFragment;
 import com.masaworld.catmap.ui.fragment.OnBackPressedListener;
 import com.masaworld.catmap.viewmodel.ViewEvent;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements LoginCheckDialogFragment.LoginCheckCallback {
 
     private static final String LOADING_FRAGMENT_TAG = "loading";
 
@@ -28,6 +31,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             showToast(e.getPayload());
             e.handled();
         }
+    }
+
+    protected void showLoginDialog(int title, int message) {
+        DialogFragment f = LoginCheckDialogFragment.get(title, message);
+        f.show(getSupportFragmentManager(), null);
     }
 
     protected boolean isEventExecutable(ViewEvent e) {
@@ -51,6 +59,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                 ft.commit();
             }
         }
+    }
+
+    @Override
+    public void onLoginAccepted() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override

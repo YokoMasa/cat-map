@@ -21,7 +21,7 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private LoginViewModel viewModel;
     private TwitterLoginButton twitterLoginButton;
@@ -47,10 +47,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void handleLoginFailedEvent(ViewEvent e) {
         buttonWrapper.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
-        Toast.makeText(this, R.string.error_login_failed, Toast.LENGTH_SHORT).show();
+        showToast(R.string.error_login_failed);
     }
 
     private void handleLoginSuccessEvent(ViewEvent e) {
+        showToast(R.string.login_succeeded);
         onBackPressed();
     }
 
