@@ -10,9 +10,14 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -34,12 +39,13 @@ import com.masaworld.catmap.viewmodel.CatMapViewModel;
 import com.masaworld.catmap.viewmodel.ViewEvent;
 
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
-        GoogleMap.OnCameraMoveListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener {
+        GoogleMap.OnCameraMoveListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private static final int PERMISSION_REQUEST_LOCATION =1458;
     private GoogleMap mMap;
     private FusedLocationProviderClient locationProviderClient;
     private CatMapViewModel viewModel;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setUpViewModel();
         setUpBroadcastReceiver();
+        setUpViews();
+    }
+
+    private void setUpViews() {
+        Toolbar toolbar = findViewById(R.id.maps_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        drawerLayout = findViewById(R.id.maps_drawer);
+        NavigationView navigationView = findViewById(R.id.maps_navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
         FloatingActionButton fab = findViewById(R.id.maps_location_button);
         fab.setOnClickListener(view -> viewModel.moveToCurrentLocation());
     }
@@ -158,6 +175,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 moveCameraToCurrentLocation();
             }
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_logout:
+                showToast("logout");
+                break;
+            case R.id.menu_oss_license:
+                showToast("oss license");
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

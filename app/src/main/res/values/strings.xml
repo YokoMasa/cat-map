@@ -11,6 +11,8 @@
     <string name="login_password">パスワード</string>
     <string name="login">ログイン</string>
     <string name="login_succeeded">ログインしました</string>
+    <string name="logout">ログアウト</string>
+    <string name="oss_licence">ライセンス</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="add">追加</string>
