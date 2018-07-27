@@ -1,16 +1,22 @@
 package com.masaworld.catmap.ui.activity;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,9 +28,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.Cat;
-import com.masaworld.catmap.data.model.CatComment;
-import com.masaworld.catmap.data.repository.CatRepository;
-import com.masaworld.catmap.data.service.CatMapService;
 import com.masaworld.catmap.service.CatPostService;
 import com.masaworld.catmap.ui.fragment.LoginCheckDialogFragment;
 import com.masaworld.catmap.viewmodel.CatMapViewModel;
@@ -33,7 +36,9 @@ import com.masaworld.catmap.viewmodel.ViewEvent;
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleMap.OnCameraMoveListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, LoginCheckDialogFragment.LoginCheckCallback {
 
+    private static final int PERMISSION_REQUEST_LOCATION =1458;
     private GoogleMap mMap;
+    private FusedLocationProviderClient locationProviderClient;
     private CatMapViewModel viewModel;
 
     @Override
@@ -43,8 +48,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         setUpViewModel();
         setUpBroadcastReceiver();
+        FloatingActionButton fab = findViewById(R.id.maps_location_button);
+        fab.setOnClickListener(view -> viewModel.moveToCurrentLocation());
     }
 
     private void setUpViewModel() {
@@ -55,6 +63,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         viewModel.getNavigateToCatEvent().observe(this, this::handleNavigateToCatEvent);
         viewModel.getNavigateToAddCatEvent().observe(this, this::handleNavigateToAddCatEvent);
         viewModel.getReloadEvent().observe(this, this::handleReloadCatsEvent);
+        viewModel.getCurrentLocationEvent().observe(this, this::handleCurrentLocationEvent);
+        viewModel.moveToCurrentLocation();
     }
 
     private void setUpBroadcastReceiver() {
@@ -81,6 +91,34 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cat_marker));
         mMap.addMarker(markerOptions).setTag(cat.id);
+    }
+
+    private void handleCurrentLocationEvent(ViewEvent e) {
+        if (isEventExecutable(e)) {
+            int result = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+            if (result == PackageManager.PERMISSION_GRANTED) {
+                moveCameraToCurrentLocation();
+            } else if (result == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSION_REQUEST_LOCATION);
+            }
+            e.handled();
+        }
+    }
+
+    private void moveCameraToCurrentLocation() {
+        try {
+            locationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+                if (mMap != null) {
+                    mMap.animateCamera(cameraUpdate);
+                }
+            });
+        } catch (SecurityException se) {
+            se.printStackTrace();
+        }
     }
 
     private void handleShowLoginDialogEvent(ViewEvent e) {
@@ -115,16 +153,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_LOCATION) {
+            if (0 < grantResults.length && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                moveCameraToCurrentLocation();
+            }
+        }
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
-        mMap.setMinZoomPreference(15);
+        mMap.setMinZoomPreference(12);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
 
-        LatLng chiba = new LatLng(35.645089, 140.040902);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(chiba));
         onCameraMove();
     }
 

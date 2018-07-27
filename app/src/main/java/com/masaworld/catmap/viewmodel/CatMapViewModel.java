@@ -27,6 +27,7 @@ public class CatMapViewModel extends ViewModel {
     private MutableLiveData<ViewEvent> reloadEvent;
     private MutableLiveData<ViewEvent<Integer>> navigateToCatEvent;
     private MutableLiveData<ViewEvent<LatLng>> navigateToAddCatEvent;
+    private MutableLiveData<ViewEvent> currentLocationEvent;
 
     public DataDripper<Cat> getCats() {
         return cats;
@@ -47,6 +48,8 @@ public class CatMapViewModel extends ViewModel {
     public LiveData<ViewEvent<LatLng>> getNavigateToAddCatEvent() { return navigateToAddCatEvent; }
 
     public LiveData<ViewEvent> getReloadEvent() { return reloadEvent; }
+
+    public LiveData<ViewEvent> getCurrentLocationEvent() { return currentLocationEvent; }
 
     public void loadCats(LatLng newPosition) {
         String[] areaCodes = getSurroundingAreaCode(newPosition);
@@ -85,6 +88,11 @@ public class CatMapViewModel extends ViewModel {
         }
     }
 
+    public void moveToCurrentLocation() {
+        toastEvent.setValue(new ViewEvent<>(R.string.finding_current_location));
+        currentLocationEvent.setValue(new ViewEvent(null));
+    }
+
     public void clear() {
         cats.clear();
         loadedAreas.clear();
@@ -117,5 +125,6 @@ public class CatMapViewModel extends ViewModel {
         navigateToCatEvent = new MutableLiveData<>();
         navigateToAddCatEvent = new MutableLiveData<>();
         reloadEvent = new MutableLiveData<>();
+        currentLocationEvent = new MutableLiveData<>();
     }
 }
