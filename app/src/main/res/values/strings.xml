@@ -12,6 +12,7 @@
     <string name="login">ログイン</string>
     <string name="login_succeeded">ログインしました</string>
     <string name="logout">ログアウト</string>
+    <string name="did_logout">ログアウトしました</string>
     <string name="oss_licence">ライセンス</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>

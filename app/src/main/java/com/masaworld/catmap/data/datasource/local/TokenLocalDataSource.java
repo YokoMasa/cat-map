@@ -15,6 +15,10 @@ public class TokenLocalDataSource {
         editor.apply();
     }
 
+    public void deleteToken() {
+        saveToken("");
+    }
+
     public String getToken() {
         return sp.getString(TOKEN_KEY, "");
     }

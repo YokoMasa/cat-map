@@ -22,7 +22,7 @@ public abstract class TokenRepository {
         instance = new UserRepositoryImpl(appContext);
     }
 
-    public abstract void saveToken(String token);
+    public abstract void deleteToken();
 
     public abstract String getToken();
 
@@ -36,8 +36,8 @@ public abstract class TokenRepository {
         private TokenRemoteDataSource tokenRemoteDataSource;
 
         @Override
-        public void saveToken(String token) {
-            tokenLocalDataSource.saveToken(token);
+        public void deleteToken() {
+            tokenLocalDataSource.deleteToken();
         }
 
         @Override

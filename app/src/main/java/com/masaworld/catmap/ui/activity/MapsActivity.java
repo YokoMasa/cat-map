@@ -46,6 +46,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     private FusedLocationProviderClient locationProviderClient;
     private CatMapViewModel viewModel;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         getSupportActionBar().setTitle("");
         getSupportActionBar().setHomeButtonEnabled(true);
         drawerLayout = findViewById(R.id.maps_drawer);
-        NavigationView navigationView = findViewById(R.id.maps_navigation_view);
+        navigationView = findViewById(R.id.maps_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
         FloatingActionButton fab = findViewById(R.id.maps_location_button);
         fab.setOnClickListener(view -> viewModel.moveToCurrentLocation());
@@ -81,6 +82,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         viewModel.getNavigateToAddCatEvent().observe(this, this::handleNavigateToAddCatEvent);
         viewModel.getReloadEvent().observe(this, this::handleReloadCatsEvent);
         viewModel.getCurrentLocationEvent().observe(this, this::handleCurrentLocationEvent);
+        viewModel.getChangeNavigationMenuEvent().observe(this, this::handleChangeNavigationMenuEvent);
+        viewModel.loadNavMenu();
         viewModel.moveToCurrentLocation();
     }
 
@@ -92,6 +95,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     protected void onResume() {
         super.onResume();
+        viewModel.loadNavMenu();
         loadCats();
     }
 
@@ -108,6 +112,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cat_marker));
         mMap.addMarker(markerOptions).setTag(cat.id);
+    }
+
+    private void handleChangeNavigationMenuEvent(ViewEvent<Integer> e) {
+        if (isEventExecutable(e)) {
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(e.getPayload());
+            e.handled();
+        }
     }
 
     private void handleCurrentLocationEvent(ViewEvent e) {
@@ -179,9 +191,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        drawerLayout.closeDrawer(GravityCompat.START);
         switch (item.getItemId()) {
             case R.id.menu_logout:
-                showToast("logout");
+                viewModel.logout();
                 break;
             case R.id.menu_oss_license:
                 showToast("oss license");

@@ -28,6 +28,7 @@ public class CatMapViewModel extends ViewModel {
     private MutableLiveData<ViewEvent<Integer>> navigateToCatEvent;
     private MutableLiveData<ViewEvent<LatLng>> navigateToAddCatEvent;
     private MutableLiveData<ViewEvent> currentLocationEvent;
+    private MutableLiveData<ViewEvent<Integer>> changeNavigationMenuEvent;
 
     public DataDripper<Cat> getCats() {
         return cats;
@@ -51,6 +52,8 @@ public class CatMapViewModel extends ViewModel {
 
     public LiveData<ViewEvent> getCurrentLocationEvent() { return currentLocationEvent; }
 
+    public LiveData<ViewEvent<Integer>> getChangeNavigationMenuEvent() { return changeNavigationMenuEvent; }
+
     public void loadCats(LatLng newPosition) {
         String[] areaCodes = getSurroundingAreaCode(newPosition);
         if (areaCodes.length != 0) {
@@ -64,6 +67,20 @@ public class CatMapViewModel extends ViewModel {
                 }
             });
         }
+    }
+
+    public void loadNavMenu() {
+        if (TokenRepository.getInstance().hasToken()) {
+            changeNavigationMenuEvent.setValue(new ViewEvent<>(R.menu.main_drawer_menu));
+        } else {
+            changeNavigationMenuEvent.setValue(new ViewEvent<>(R.menu.main_drawer_menu_loggedout));
+        }
+    }
+
+    public void logout() {
+        TokenRepository.getInstance().deleteToken();
+        toastEvent.setValue(new ViewEvent<>(R.string.did_logout));
+        changeNavigationMenuEvent.setValue(new ViewEvent<>(R.menu.main_drawer_menu_loggedout));
     }
 
     public void addNewCat(LatLng latLng) {
@@ -126,5 +143,6 @@ public class CatMapViewModel extends ViewModel {
         navigateToAddCatEvent = new MutableLiveData<>();
         reloadEvent = new MutableLiveData<>();
         currentLocationEvent = new MutableLiveData<>();
+        changeNavigationMenuEvent = new MutableLiveData<>();
     }
 }
