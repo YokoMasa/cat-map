@@ -14,4 +14,8 @@ public interface TokenService {
     @POST("/user/twitter_login/")
     Call<Token> login(@Field("access_token_key") String tokenKey, @Field("access_token_secret") String tokenSecret);
 
+    @FormUrlEncoded
+    @POST("/user/google_login/")
+    Call<Token> googleLogin(@Field("auth_code") String authCode);
+
 }

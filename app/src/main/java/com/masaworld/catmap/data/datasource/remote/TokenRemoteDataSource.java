@@ -32,4 +32,11 @@ public class TokenRemoteDataSource {
         return liveData;
     }
 
+    public LiveData<FailableData<Token>> googleLogin(String authCode) {
+        MutableLiveData<FailableData<Token>> liveData = new MutableLiveData<>();
+        FailableData<Token> failableData = new FailableData<>();
+        userService.googleLogin(authCode).enqueue(new ResponseHandler<>(failableData, liveData));
+        return liveData;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.masaworld.catmap.viewmodel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.masaworld.catmap.R;
@@ -129,6 +130,7 @@ public class CatMapViewModel extends ViewModel {
                 }
             }
         }
+
         String[] codes = new String[codeList.size()];
         codes = codeList.toArray(codes);
         return codes;

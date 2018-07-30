@@ -28,10 +28,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_login_button"
+            android:layout_width="225dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"/>
+
         <com.twitter.sdk.android.core.identity.TwitterLoginButton
             android:id="@+id/twitter_login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
             android:layout_marginTop="20dp" />
 
     </LinearLayout>
