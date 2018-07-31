@@ -19,6 +19,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -31,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.masaworld.catmap.R;
 import com.masaworld.catmap.data.model.Cat;
 import com.masaworld.catmap.service.CatPostService;
@@ -83,6 +88,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         viewModel.getReloadEvent().observe(this, this::handleReloadCatsEvent);
         viewModel.getCurrentLocationEvent().observe(this, this::handleCurrentLocationEvent);
         viewModel.getChangeNavigationMenuEvent().observe(this, this::handleChangeNavigationMenuEvent);
+        viewModel.getLogoutFromGoogleEvent().observe(this, this::handleLogoutFromGoogleEvent);
         viewModel.loadNavMenu();
         viewModel.moveToCurrentLocation();
     }
@@ -147,6 +153,19 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
             });
         } catch (SecurityException se) {
             se.printStackTrace();
+        }
+    }
+
+    private void handleLogoutFromGoogleEvent(ViewEvent e) {
+        if (isEventExecutable(e)) {
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+            if (account != null) {
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .build();
+                GoogleSignInClient client = GoogleSignIn.getClient(this, gso);
+                client.signOut();
+            }
+            e.handled();
         }
     }
 

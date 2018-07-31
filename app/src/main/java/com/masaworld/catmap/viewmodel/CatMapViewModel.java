@@ -30,6 +30,7 @@ public class CatMapViewModel extends ViewModel {
     private MutableLiveData<ViewEvent<LatLng>> navigateToAddCatEvent;
     private MutableLiveData<ViewEvent> currentLocationEvent;
     private MutableLiveData<ViewEvent<Integer>> changeNavigationMenuEvent;
+    private MutableLiveData<ViewEvent> logoutFromGoogleEvent;
 
     public DataDripper<Cat> getCats() {
         return cats;
@@ -54,6 +55,8 @@ public class CatMapViewModel extends ViewModel {
     public LiveData<ViewEvent> getCurrentLocationEvent() { return currentLocationEvent; }
 
     public LiveData<ViewEvent<Integer>> getChangeNavigationMenuEvent() { return changeNavigationMenuEvent; }
+
+    public LiveData<ViewEvent> getLogoutFromGoogleEvent() { return logoutFromGoogleEvent; }
 
     public void loadCats(LatLng newPosition) {
         String[] areaCodes = getSurroundingAreaCode(newPosition);
@@ -80,6 +83,7 @@ public class CatMapViewModel extends ViewModel {
 
     public void logout() {
         TokenRepository.getInstance().deleteToken();
+        logoutFromGoogleEvent.setValue(new ViewEvent(null));
         toastEvent.setValue(new ViewEvent<>(R.string.did_logout));
         changeNavigationMenuEvent.setValue(new ViewEvent<>(R.menu.main_drawer_menu_loggedout));
     }
@@ -146,5 +150,6 @@ public class CatMapViewModel extends ViewModel {
         reloadEvent = new MutableLiveData<>();
         currentLocationEvent = new MutableLiveData<>();
         changeNavigationMenuEvent = new MutableLiveData<>();
+        logoutFromGoogleEvent = new MutableLiveData<>();
     }
 }
