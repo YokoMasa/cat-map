@@ -16,7 +16,10 @@ public class CatCommentFragmentViewModel extends ViewModel {
     private MutableLiveData<ViewEvent<Integer>> toastEvent;
     private MutableLiveData<ViewEvent> loginDialogEvent;
     private MutableLiveData<List<CatComment>> comments;
+    private MutableLiveData<ViewEvent> hideLoadingEvent;
     private int catId;
+
+    public LiveData<ViewEvent> getHideLoadingEvent() { return hideLoadingEvent; }
 
     public LiveData<ViewEvent<Integer>> getToastEvent() {
         return toastEvent;
@@ -50,6 +53,7 @@ public class CatCommentFragmentViewModel extends ViewModel {
         CatRepository.getInstance().getCatComments(catId).observeForever(data -> {
             if (data != null && !data.failed) {
                 comments.setValue(data.data);
+                hideLoadingEvent.setValue(new ViewEvent(null));
             } else {
                 toastEvent.setValue(new ViewEvent<>(R.string.failed_to_load_comments));
             }
@@ -60,5 +64,6 @@ public class CatCommentFragmentViewModel extends ViewModel {
         toastEvent = new MutableLiveData<>();
         comments = new MutableLiveData<>();
         loginDialogEvent = new MutableLiveData<>();
+        hideLoadingEvent = new MutableLiveData<>();
     }
 }

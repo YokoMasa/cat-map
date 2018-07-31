@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.masaworld.catmap.R;
@@ -41,6 +41,8 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
     private CatCommentFragmentViewModel viewModel;
     private EditText editText;
     private CommentListAdapter adapter;
+    private RecyclerView recyclerView;
+    private FrameLayout progressbarWrapper;
 
     public static CatCommentFragment get(int id) {
         CatCommentFragment f = new CatCommentFragment();
@@ -81,6 +83,7 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
         viewModel.getToastEvent().observe(this, this::handleToastEvent);
         viewModel.getLoginDialogEvent().observe(this, this::handleLoginDialogEvent);
         viewModel.getComments().observe(this, this::handleComments);
+        viewModel.getHideLoadingEvent().observe(this, this::handleHideLoadingEvent);
     }
 
     @Override
@@ -118,21 +121,32 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_cat_comment, container, false);
+        progressbarWrapper = view.findViewById(R.id.fragment_cat_progressbar);
+
         Toolbar toolbar = view.findViewById(R.id.fragment_cat_toolbar);
         toolbar.inflateMenu(R.menu.cat_comment_menu);
         toolbar.setOnMenuItemClickListener(this);
+
         editText = view.findViewById(R.id.fragment_cat_edit_text);
         AppCompatImageButton button = view.findViewById(R.id.fragment_cat_button);
         button.setOnClickListener(view1 -> {
             viewModel.postComment(editText.getText().toString());
             editText.setText("");
         });
-        RecyclerView recyclerView = view.findViewById(R.id.fragment_cat_recycler_view);
+
+        recyclerView = view.findViewById(R.id.fragment_cat_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         adapter = new CommentListAdapter(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         return view;
+    }
+
+    private void handleHideLoadingEvent(ViewEvent e) {
+        if (isEventExecutable(e)) {
+            progressbarWrapper.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void handleComments(List<CatComment> comments) {
