@@ -1,5 +1,6 @@
 package com.masaworld.catmap.ui.fragment;
 
+import android.animation.Animator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -75,14 +78,40 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(CatCommentFragmentViewModel.class);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            int id = bundle.getInt(EXTRA_ID);
-            viewModel.load(id);
-            viewModel.getToastEvent().observe(this, this::handleToastEvent);
-            viewModel.getLoginDialogEvent().observe(this, this::handleLoginDialogEvent);
-            viewModel.getComments().observe(this, this::handleComments);
+        viewModel.getToastEvent().observe(this, this::handleToastEvent);
+        viewModel.getLoginDialogEvent().observe(this, this::handleLoginDialogEvent);
+        viewModel.getComments().observe(this, this::handleComments);
+    }
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        Animation animation =  super.onCreateAnimation(transit, enter, nextAnim);
+        if (animation == null) {
+            if (enter && nextAnim != 0) {
+                animation = AnimationUtils.loadAnimation(getContext(), nextAnim);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        Bundle bundle = getArguments();
+                        if (bundle != null) {
+                            int id = bundle.getInt(EXTRA_ID);
+                            viewModel.load(id);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
         }
+        return animation;
     }
 
     @Nullable
@@ -128,6 +157,7 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
     private boolean isEventExecutable(ViewEvent e) {
         return e != null && !e.isHandled();
     }
+
 
     @Override
     public void onLoginAccepted() {
