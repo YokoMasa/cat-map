@@ -19,6 +19,7 @@ import java.util.Set;
 
 public class CatMapViewModel extends ViewModel {
 
+    private static final float ZOOM_THRESHOLD = 13;
     private final int[] surroundings = new int[]{1, 0, -1};
     private CatRepository repository;
     private DataDripper<Cat> cats;
@@ -31,6 +32,7 @@ public class CatMapViewModel extends ViewModel {
     private MutableLiveData<ViewEvent> currentLocationEvent;
     private MutableLiveData<ViewEvent<Integer>> changeNavigationMenuEvent;
     private MutableLiveData<ViewEvent> logoutFromGoogleEvent;
+    private MutableLiveData<ViewEvent<Boolean>> zoomWarningEvent;
 
     public DataDripper<Cat> getCats() {
         return cats;
@@ -58,8 +60,25 @@ public class CatMapViewModel extends ViewModel {
 
     public LiveData<ViewEvent> getLogoutFromGoogleEvent() { return logoutFromGoogleEvent; }
 
-    public void loadCats(LatLng newPosition) {
-        String[] areaCodes = getSurroundingAreaCode(newPosition);
+    public LiveData<ViewEvent<Boolean>> getZoomWarningEvent() { return zoomWarningEvent; }
+
+    public void loadCatsIfPossible(LatLng newPosition, float zoom) {
+        ViewEvent<Boolean> e = zoomWarningEvent.getValue();
+        boolean showed = e == null ? false : e.getPayload();
+        if (zoom < ZOOM_THRESHOLD) {
+            if (!showed) {
+                zoomWarningEvent.setValue(new ViewEvent<>(true));
+            }
+        } else {
+            if (showed) {
+                zoomWarningEvent.setValue(new ViewEvent<>(false));
+            }
+            loadCats(newPosition);
+        }
+    }
+
+    private void loadCats(LatLng position) {
+        String[] areaCodes = getSurroundingAreaCode(position);
         if (areaCodes.length != 0) {
             repository.getCatsByArea(areaCodes).observeForever(listFailableData -> {
                 if (listFailableData != null) {
@@ -151,5 +170,6 @@ public class CatMapViewModel extends ViewModel {
         currentLocationEvent = new MutableLiveData<>();
         changeNavigationMenuEvent = new MutableLiveData<>();
         logoutFromGoogleEvent = new MutableLiveData<>();
+        zoomWarningEvent = new MutableLiveData<>();
     }
 }

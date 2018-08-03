@@ -1,6 +1,7 @@
 package com.masaworld.catmap.ui.activity;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -52,6 +54,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     private CatMapViewModel viewModel;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private TextView zoomWarning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         drawerLayout = findViewById(R.id.maps_drawer);
         navigationView = findViewById(R.id.maps_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
+        zoomWarning = findViewById(R.id.maps_zoom_warning);
         FloatingActionButton fab = findViewById(R.id.maps_location_button);
         fab.setOnClickListener(view -> viewModel.moveToCurrentLocation());
     }
@@ -89,6 +93,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         viewModel.getCurrentLocationEvent().observe(this, this::handleCurrentLocationEvent);
         viewModel.getChangeNavigationMenuEvent().observe(this, this::handleChangeNavigationMenuEvent);
         viewModel.getLogoutFromGoogleEvent().observe(this, this::handleLogoutFromGoogleEvent);
+        viewModel.getZoomWarningEvent().observe(this, this::handleZoomWarningEvent);
         viewModel.loadNavMenu();
         viewModel.moveToCurrentLocation();
     }
@@ -108,7 +113,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     private void loadCats() {
         if (mMap != null) {
             LatLng target = mMap.getCameraPosition().target;
-            viewModel.loadCats(target);
+            float zoom = mMap.getCameraPosition().zoom;
+            viewModel.loadCatsIfPossible(target, zoom);
         }
     }
 
@@ -118,6 +124,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cat_marker));
         mMap.addMarker(markerOptions).setTag(cat.id);
+    }
+
+    private void handleZoomWarningEvent(ViewEvent<Boolean> e) {
+        if (isEventExecutable(e)) {
+            if (e.getPayload()) {
+                ObjectAnimator.ofFloat(zoomWarning, "alpha", 1).setDuration(200).start();
+            } else {
+                ObjectAnimator.ofFloat(zoomWarning, "alpha", 0).setDuration(200).start();
+            }
+            e.handled();
+        }
     }
 
     private void handleChangeNavigationMenuEvent(ViewEvent<Integer> e) {
@@ -244,7 +261,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
-        //mMap.setMinZoomPreference(12);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);

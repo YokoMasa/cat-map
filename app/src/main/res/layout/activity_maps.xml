@@ -19,14 +19,30 @@
             android:layout_height="match_parent"
             tools:context=".ui.activity.MapsActivity" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/maps_toolbar"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:navigationIcon="@drawable/navigation_menu"/>
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/maps_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:navigationIcon="@drawable/navigation_menu"/>
+
+            <TextView
+                android:id="@+id/maps_zoom_warning"
+                android:background="@color/zoom_warning_red"
+                android:text="@string/zoom_warning"
+                android:textColor="#FFF"
+                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/maps_location_button"
