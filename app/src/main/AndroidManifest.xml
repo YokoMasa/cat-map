@@ -80,6 +80,10 @@
             android:name=".ui.activity.ImageActivity"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".ui.activity.LicenseActivity"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

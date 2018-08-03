@@ -145,6 +145,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     private void moveCameraToCurrentLocation() {
         try {
             locationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location == null) {
+                    return;
+                }
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
                 if (mMap != null) {
@@ -199,6 +202,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         }
     }
 
+    private void showLicense() {
+        Intent intent = new Intent(this, LicenseActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_LOCATION) {
@@ -216,7 +224,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 viewModel.logout();
                 break;
             case R.id.menu_oss_license:
-                showToast("oss license");
+                showLicense();
                 break;
         }
         return true;
@@ -236,7 +244,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
-        mMap.setMinZoomPreference(12);
+        //mMap.setMinZoomPreference(12);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
