@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class CatMapViewModel extends ViewModel {
 
-    private static final float ZOOM_THRESHOLD = 13;
+    private static final float ZOOM_THRESHOLD = 12;
     private final int[] surroundings = new int[]{1, 0, -1};
     private CatRepository repository;
     private DataDripper<Cat> cats;
@@ -140,8 +140,8 @@ public class CatMapViewModel extends ViewModel {
     }
 
     private String[] getSurroundingAreaCode(LatLng latLng) {
-        int lat = (int) (latLng.latitude * 100);
-        int lng = (int) (latLng.longitude * 100);
+        int lat = (int) (latLng.latitude * 10);
+        int lng = (int) (latLng.longitude * 10);
         List<String> codeList = new ArrayList<>();
 
         for (int latDelta : surroundings) {

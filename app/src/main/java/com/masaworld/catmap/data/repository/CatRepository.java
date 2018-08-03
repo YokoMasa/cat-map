@@ -108,8 +108,8 @@ public abstract class CatRepository {
         }
 
         private String createAreaCode(LatLng latLng) {
-            int lat = (int) (100 * latLng.latitude);
-            int lng = (int) (100 * latLng.longitude);
+            int lat = (int) (10 * latLng.latitude);
+            int lng = (int) (10 * latLng.longitude);
             return Integer.toString(lat) + ":" + Integer.toString(lng);
         }
 
