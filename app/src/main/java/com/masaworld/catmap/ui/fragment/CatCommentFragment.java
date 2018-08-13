@@ -62,7 +62,12 @@ public class CatCommentFragment extends Fragment implements Toolbar.OnMenuItemCl
 
     public void hide() {
         if (fm == null) {
-            return;
+            if (isAdded()) {
+                fm = getFragmentManager();
+            }
+            if (fm == null) {
+                return;
+            }
         }
 
         Fragment f = fm.findFragmentByTag(TAG);

@@ -40,6 +40,14 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp" />
 
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textColor="#666666"
+            android:textSize="12sp"
+            android:text="@string/login_privacy_notification"/>
+
     </LinearLayout>
 
 </FrameLayout>

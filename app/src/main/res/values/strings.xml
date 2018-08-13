@@ -34,6 +34,10 @@
     <string name="failed_to_load_comments">コメントがロードできませんでした</string>
     <string name="finding_current_location">現在地を取得します...</string>
     <string name="zoom_warning">ネコを読み込むにはこの表示が消えるまで地図を拡大してください。</string>
+    <string name="login_privacy_notification">
+        ※　このアプリはユーザーの名前などの基本的なプロフィール情報を取得するためだけにログイン情報を利用します。
+        このアプリがSNSに勝手に投稿したり、登録情報を変更したりすることは一切ございません。
+    </string>
 
     <string name="from_camera">写真を撮る</string>
     <string name="from_album">アルバムから選ぶ</string>
