@@ -25,16 +25,9 @@
             android:src="@drawable/add_image"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/toolbarTransparent"
-        android:layout_gravity="bottom">
+            android:layout_height="0dp" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/add_image_submit"
@@ -44,6 +37,6 @@
             android:layout_gravity="end"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
-    </FrameLayout>
+    </LinearLayout>
 
 </FrameLayout>
