@@ -21,6 +21,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -55,6 +58,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private TextView zoomWarning;
+    private InterstitialAd ad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +68,27 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        setUpAd();
         setUpViewModel();
         setUpBroadcastReceiver();
         setUpViews();
+    }
+
+    private void setUpAd() {
+        String testAdId = "ca-app-pub-3940256099942544/1033173712";
+        String testDeviceId = "E89CB614F304A53F1B274611DDCAD047";
+        String adId = getString(R.string.admob_ad_unit_id);
+        ad = new InterstitialAd(this);
+        ad.setAdUnitId(adId);
+        ad.loadAd(new AdRequest.Builder().build());
+        ad.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                ad.loadAd(new AdRequest.Builder().addTestDevice(testDeviceId).build());
+                viewModel.adFinished();
+            }
+        });
     }
 
     private void setUpViews() {
@@ -94,6 +116,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         viewModel.getChangeNavigationMenuEvent().observe(this, this::handleChangeNavigationMenuEvent);
         viewModel.getLogoutFromGoogleEvent().observe(this, this::handleLogoutFromGoogleEvent);
         viewModel.getZoomWarningEvent().observe(this, this::handleZoomWarningEvent);
+        viewModel.getShowAdEvent().observe(this, this::handleShowAdEvent);
         viewModel.loadNavMenu();
         viewModel.moveToCurrentLocation();
     }
@@ -124,6 +147,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 .position(latLng)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cat_marker));
         mMap.addMarker(markerOptions).setTag(cat.id);
+    }
+
+    private void handleShowAdEvent(ViewEvent e) {
+        if (isEventExecutable(e)) {
+            if (ad.isLoaded()) {
+                ad.show();
+            } else {
+                viewModel.adFinished();
+            }
+            e.handled();
+        }
     }
 
     private void handleZoomWarningEvent(ViewEvent<Boolean> e) {

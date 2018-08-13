@@ -19,8 +19,11 @@ import java.util.Set;
 
 public class CatMapViewModel extends ViewModel {
 
+    private static final int AD_FREQUENCY = 2;
     private static final float ZOOM_THRESHOLD = 12;
+    private static int adCount = 1;
     private final int[] surroundings = new int[]{1, 0, -1};
+    private int pendingCatId;
     private CatRepository repository;
     private DataDripper<Cat> cats;
     private Set<String> loadedAreas = new HashSet<>();
@@ -33,6 +36,7 @@ public class CatMapViewModel extends ViewModel {
     private MutableLiveData<ViewEvent<Integer>> changeNavigationMenuEvent;
     private MutableLiveData<ViewEvent> logoutFromGoogleEvent;
     private MutableLiveData<ViewEvent<Boolean>> zoomWarningEvent;
+    private MutableLiveData<ViewEvent> showAdEvent;
 
     public DataDripper<Cat> getCats() {
         return cats;
@@ -61,6 +65,8 @@ public class CatMapViewModel extends ViewModel {
     public LiveData<ViewEvent> getLogoutFromGoogleEvent() { return logoutFromGoogleEvent; }
 
     public LiveData<ViewEvent<Boolean>> getZoomWarningEvent() { return zoomWarningEvent; }
+
+    public LiveData<ViewEvent> getShowAdEvent() { return showAdEvent; }
 
     public void loadCatsIfPossible(LatLng newPosition, float zoom) {
         ViewEvent<Boolean> e = zoomWarningEvent.getValue();
@@ -116,7 +122,19 @@ public class CatMapViewModel extends ViewModel {
     }
 
     public void showCat(int id) {
-        ViewEvent<Integer> e = new ViewEvent<>(id);
+        if (adCount < AD_FREQUENCY) {
+            adCount++;
+            ViewEvent<Integer> e = new ViewEvent<>(id);
+            navigateToCatEvent.setValue(e);
+        } else {
+            adCount = 0;
+            pendingCatId = id;
+            showAdEvent.setValue(new ViewEvent(null));
+        }
+    }
+
+    public void adFinished() {
+        ViewEvent<Integer> e = new ViewEvent<>(pendingCatId);
         navigateToCatEvent.setValue(e);
     }
 
@@ -171,5 +189,6 @@ public class CatMapViewModel extends ViewModel {
         changeNavigationMenuEvent = new MutableLiveData<>();
         logoutFromGoogleEvent = new MutableLiveData<>();
         zoomWarningEvent = new MutableLiveData<>();
+        showAdEvent = new MutableLiveData<>();
     }
 }
