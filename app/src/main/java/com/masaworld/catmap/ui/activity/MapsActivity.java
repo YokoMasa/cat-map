@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -75,9 +77,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     }
 
     private void setUpAd() {
-        String testAdId = "ca-app-pub-3940256099942544/1033173712";
-        String testDeviceId = "E89CB614F304A53F1B274611DDCAD047";
-        String adId = getString(R.string.admob_ad_unit_id);
+        String adId = getString(R.string.admob_interstitial_id);
         ad = new InterstitialAd(this);
         ad.setAdUnitId(adId);
         ad.loadAd(new AdRequest.Builder().build());
@@ -85,7 +85,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
-                ad.loadAd(new AdRequest.Builder().addTestDevice(testDeviceId).build());
+                ad.loadAd(new AdRequest.Builder().build());
                 viewModel.adFinished();
             }
         });
@@ -102,6 +102,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         zoomWarning = findViewById(R.id.maps_zoom_warning);
         FloatingActionButton fab = findViewById(R.id.maps_location_button);
         fab.setOnClickListener(view -> viewModel.moveToCurrentLocation());
+        AdView adView = findViewById(R.id.maps_banner);
+        adView.loadAd(new AdRequest.Builder().build());
     }
 
     private void setUpViewModel() {

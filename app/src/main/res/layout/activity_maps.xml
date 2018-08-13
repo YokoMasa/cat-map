@@ -1,59 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/tools"
     android:id="@+id/maps_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <FrameLayout
+    
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="bottom">
 
-        <fragment
-            xmlns:map="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".ui.activity.MapsActivity" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/maps_toolbar"
+            <fragment
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".ui.activity.MapsActivity" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/maps_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="?attr/actionBarTheme"
+                    app:navigationIcon="@drawable/navigation_menu"/>
+
+                <TextView
+                    android:id="@+id/maps_zoom_warning"
+                    android:background="@color/zoom_warning_red"
+                    android:text="@string/zoom_warning"
+                    android:textColor="#FFF"
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/maps_location_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#00FFFFFF"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
-                app:navigationIcon="@drawable/navigation_menu"/>
+                android:layout_gravity="bottom|end"
+                android:layout_margin="13dp"
+                android:src="@drawable/location"/>
 
-            <TextView
-                android:id="@+id/maps_zoom_warning"
-                android:background="@color/zoom_warning_red"
-                android:text="@string/zoom_warning"
-                android:textColor="#FFF"
-                android:padding="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        </FrameLayout>
 
-        </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/maps_location_button"
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/maps_banner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="13dp"
-            android:src="@drawable/location"/>
+            android:layout_gravity="center"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/admob_banner_id"/>
 
-    </FrameLayout>
-
+    </LinearLayout>
+    
     <android.support.design.widget.NavigationView
         android:id="@+id/maps_navigation_view"
         android:layout_width="250dp"
