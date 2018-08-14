@@ -9,5 +9,6 @@
 /captures
 .externalNativeBuild
 app/src/main/res/values/credentials.xml
+app/src/release/res/values/credentials.xml
 app/src/main/res/values/google_maps_api.xml
 
