@@ -4,4 +4,8 @@
         android:id="@+id/menu_oss_license"
         android:icon="@drawable/oss_license"
         android:title="@string/oss_licence"/>
+    <item
+        android:id="@+id/menu_privacy_policy"
+        android:icon="@drawable/privacy_policy"
+        android:title="@string/menu_privacy_policy"/>
 </menu>

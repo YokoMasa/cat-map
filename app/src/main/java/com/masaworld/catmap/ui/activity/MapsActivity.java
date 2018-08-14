@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -260,6 +261,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         startActivity(intent);
     }
 
+    private void showPrivacyPolicy() {
+        final String url = getString(R.string.privacy_policy_url);
+        Uri uri = Uri.parse(url);
+        Intent i = new Intent(Intent.ACTION_VIEW,uri);
+        startActivity(i);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_LOCATION) {
@@ -278,6 +286,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 break;
             case R.id.menu_oss_license:
                 showLicense();
+                break;
+            case R.id.menu_privacy_policy:
+                showPrivacyPolicy();
                 break;
         }
         return true;

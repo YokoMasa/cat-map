@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="privacy_policy_url" translatable="false">https://nekonoibasho.net/privacy_policy.html</string>
     <string name="app_name">CatMap</string>
     <string name="title_activity_maps">Map</string>
     <string name="login_check_message_add_cat">You need to sign in to post a new cat. Do you want to sign in?</string>
@@ -47,4 +48,5 @@
     <string name="error_server_connection">Failed to connect to the server</string>
     <string name="error_login_failed">Sign in failed</string>
     <string name="error_unexpected">Unexpected error occurred</string>
+    <string name="menu_privacy_policy">privacy policy</string>
 </resources>
