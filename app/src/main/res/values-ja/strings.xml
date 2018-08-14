@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ねこの居場所</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="login_check_message_add_cat">ネコをマップに追加するにはログインする必要があります。ログインしますか？</string>
+    <string name="login_check_title_add_cat">ネコをマップに追加</string>
+    <string name="login_check_message_add_image">画像を追加するにはログインする必要があります。ログインしますか？</string>
+    <string name="login_check_title_add_image">画像を追加</string>
+    <string name="login_check_message_add_comment">コメントを追加するにはログインする必要があります。ログインしますか？</string>
+    <string name="login_check_title_add_comment">コメントを追加</string>
+    <string name="login_email">メールアドレス</string>
+    <string name="login_password">パスワード</string>
+    <string name="login">ログイン</string>
+    <string name="login_succeeded">ログインしました</string>
+    <string name="logout">ログアウト</string>
+    <string name="did_logout">ログアウトしました</string>
+    <string name="oss_licence">ライセンス</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="add">追加</string>
+    <string name="added_cat">ネコを追加しました。</string>
+    <string name="uncompleted_form">情報が足りません！</string>
+    <string name="name">名前</string>
+    <string name="adding_cat">ネコを追加中...</string>
+    <string name="failed_to_add_cat">ネコを追加できませんでした</string>
+    <string name="images">画像</string>
+    <string name="add_image">画像を追加</string>
+    <string name="adding_image">画像を追加中...</string>
+    <string name="added_image">画像を追加しました</string>
+    <string name="failed_to_add_image">画像の追加に失敗しました</string>
+    <string name="comments">コメント</string>
+    <string name="close">閉じる</string>
+    <string name="adding_comment">コメントを追加中...</string>
+    <string name="failed_to_add_comment">コメントの追加に失敗しました</string>
+    <string name="failed_to_load_comments">コメントがロードできませんでした</string>
+    <string name="finding_current_location">現在地を取得します...</string>
+    <string name="zoom_warning">ネコを読み込むにはこの表示が消えるまで地図を拡大してください。</string>
+    <string name="login_privacy_notification">
+        ※　このアプリはユーザーの名前などの基本的なプロフィール情報を取得するためだけにログイン情報を利用します。
+        このアプリがSNSに勝手に投稿したり、登録情報を変更したりすることは一切ございません。
+    </string>
+
+    <string name="from_camera">写真を撮る</string>
+    <string name="from_album">アルバムから選ぶ</string>
+    <string name="add_cat">ネコを追加</string>
+
+    <string name="error_server_connection">サーバーに接続できません。</string>
+    <string name="error_login_failed">ログインに失敗しました。</string>
+    <string name="error_unexpected">予期せぬエラーが発生しました。</string>
+</resources>
