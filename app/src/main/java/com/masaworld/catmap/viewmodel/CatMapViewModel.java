@@ -19,8 +19,9 @@ import java.util.Set;
 
 public class CatMapViewModel extends ViewModel {
 
+    public static final float ZOOM_THRESHOLD = 10;
+
     private static final int AD_FREQUENCY = 2;
-    private static final float ZOOM_THRESHOLD = 12;
     private static int adCount = 1;
     private final int[] surroundings = new int[]{1, 0, -1};
     private int pendingCatId;
@@ -35,7 +36,6 @@ public class CatMapViewModel extends ViewModel {
     private MutableLiveData<ViewEvent> currentLocationEvent;
     private MutableLiveData<ViewEvent<Integer>> changeNavigationMenuEvent;
     private MutableLiveData<ViewEvent> logoutFromGoogleEvent;
-    private MutableLiveData<ViewEvent<Boolean>> zoomWarningEvent;
     private MutableLiveData<ViewEvent> showAdEvent;
 
     public DataDripper<Cat> getCats() {
@@ -64,21 +64,10 @@ public class CatMapViewModel extends ViewModel {
 
     public LiveData<ViewEvent> getLogoutFromGoogleEvent() { return logoutFromGoogleEvent; }
 
-    public LiveData<ViewEvent<Boolean>> getZoomWarningEvent() { return zoomWarningEvent; }
-
     public LiveData<ViewEvent> getShowAdEvent() { return showAdEvent; }
 
     public void loadCatsIfPossible(LatLng newPosition, float zoom) {
-        ViewEvent<Boolean> e = zoomWarningEvent.getValue();
-        boolean showed = e == null ? false : e.getPayload();
-        if (zoom < ZOOM_THRESHOLD) {
-            if (!showed) {
-                zoomWarningEvent.setValue(new ViewEvent<>(true));
-            }
-        } else {
-            if (showed) {
-                zoomWarningEvent.setValue(new ViewEvent<>(false));
-            }
+        if (ZOOM_THRESHOLD <= zoom) {
             loadCats(newPosition);
         }
     }
@@ -188,7 +177,6 @@ public class CatMapViewModel extends ViewModel {
         currentLocationEvent = new MutableLiveData<>();
         changeNavigationMenuEvent = new MutableLiveData<>();
         logoutFromGoogleEvent = new MutableLiveData<>();
-        zoomWarningEvent = new MutableLiveData<>();
         showAdEvent = new MutableLiveData<>();
     }
 }

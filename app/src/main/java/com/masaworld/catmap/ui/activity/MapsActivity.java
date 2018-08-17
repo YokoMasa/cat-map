@@ -54,6 +54,7 @@ import com.masaworld.catmap.viewmodel.ViewEvent;
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleMap.OnCameraMoveListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener {
 
+    private static final float ZOOM_THRESHOLD = 12;
     private static final int PERMISSION_REQUEST_LOCATION =1458;
     private GoogleMap mMap;
     private FusedLocationProviderClient locationProviderClient;
@@ -118,7 +119,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
         viewModel.getCurrentLocationEvent().observe(this, this::handleCurrentLocationEvent);
         viewModel.getChangeNavigationMenuEvent().observe(this, this::handleChangeNavigationMenuEvent);
         viewModel.getLogoutFromGoogleEvent().observe(this, this::handleLogoutFromGoogleEvent);
-        viewModel.getZoomWarningEvent().observe(this, this::handleZoomWarningEvent);
         viewModel.getShowAdEvent().observe(this, this::handleShowAdEvent);
         viewModel.loadNavMenu();
         viewModel.moveToCurrentLocation();
@@ -158,17 +158,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
                 ad.show();
             } else {
                 viewModel.adFinished();
-            }
-            e.handled();
-        }
-    }
-
-    private void handleZoomWarningEvent(ViewEvent<Boolean> e) {
-        if (isEventExecutable(e)) {
-            if (e.getPayload()) {
-                ObjectAnimator.ofFloat(zoomWarning, "alpha", 1).setDuration(200).start();
-            } else {
-                ObjectAnimator.ofFloat(zoomWarning, "alpha", 0).setDuration(200).start();
             }
             e.handled();
         }
@@ -307,11 +296,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setCompassEnabled(false);
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
-
         onCameraMove();
     }
 
@@ -330,6 +319,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,
     @Override
     public void onCameraMove() {
         loadCats();
+        if (mMap != null) {
+            float zoom = mMap.getCameraPosition().zoom;
+            if (zoom < CatMapViewModel.ZOOM_THRESHOLD) {
+                if (zoomWarning.getAlpha() == 0) {
+                    ObjectAnimator.ofFloat(zoomWarning, "alpha", 1).setDuration(200).start();
+                }
+            } else {
+                if (zoomWarning.getAlpha() == 1) {
+                    ObjectAnimator.ofFloat(zoomWarning, "alpha", 0).setDuration(200).start();
+                }
+            }
+        }
     }
 
     private class CatPostBroadcastReceiver extends BroadcastReceiver {
